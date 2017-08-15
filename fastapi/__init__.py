@@ -1,9 +1,10 @@
 import os
+import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
 from raven.contrib.flask import Sentry
-
+from sqlalchemy import engine, event
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -53,6 +54,28 @@ def init_logger():
     app.logger.addHandler(rotate_handler)
 
     app.logger.info('初始化日志成功')
+
+
+@event.listens_for(engine.Engine, 'before_cursor_execute')
+def before_cursor_execute(conn, cursor, statement, parameters,
+                          context, exceutemany):
+    context.query_start_ts = int(time.time() * 1000)
+
+
+@event.listens_for(engine.Engine, 'after_cursor_execute')
+def after_cursor_execute(conn, cursor, statement, parameters,
+                         context, exceutemany):
+    cost = int(time.time() * 1000) - context.query_start_ts
+    str_params = ''
+    if isinstance(parameters, dict):
+        for name, val in parameters.items():
+            str_params += '{}:{}, '.format(name, val)
+    elif isinstance(parameters, tuple):
+        str_params = ', '.join([str(item) for item in parameters])
+
+    str_statement = statement.replace('\n', ' ')
+    sql_log = '[cost: {}ms]sql: {}, params: {}'.format(cost, str_statement, str_params)
+    app.logger.debug(sql_log)
 
 
 def init_db():
