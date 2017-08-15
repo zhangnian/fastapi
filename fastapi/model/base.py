@@ -2,7 +2,7 @@ from datetime import datetime
 
 import flask
 
-from fastapi import db, ms
+from fastapi.fastapi import db, ms
 
 
 class BaseModel(db.Model):

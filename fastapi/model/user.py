@@ -1,7 +1,7 @@
 import flask
 from marshmallow import post_load, validates, ValidationError
 
-from fastapi import db, ms
+from fastapi.fastapi import db
 from fastapi.model.base import BaseModel, BaseSchema
 
 
