@@ -19,6 +19,7 @@ app = Flask(__name__)
 db = SQLAlchemy()
 ms = Marshmallow(app)
 
+__all__ = [app, db]
 
 def init_config():
     config = load_config()
