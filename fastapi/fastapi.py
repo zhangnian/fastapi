@@ -13,7 +13,7 @@ from fastapi.utils.error import APIError
 from fastapi.utils.error_handlers import error_404_handler, error_handler
 from fastapi.utils.hooks import before_request_handler, after_request_handler
 from fastapi.utils.redis_client import init_redis_client
-from fastapi.config import load_config
+from fastapi.config import config
 
 app = Flask(__name__)
 db = SQLAlchemy()
@@ -21,9 +21,10 @@ ms = Marshmallow(app)
 
 __all__ = [app, db]
 
+
 def init_config():
-    config = load_config()
-    app.config.from_object(config)
+    run_mode = os.environ.get('FASTAPI_MODE', 'dev')
+    app.config.from_object(config[run_mode])
 
 
 def init_logger():

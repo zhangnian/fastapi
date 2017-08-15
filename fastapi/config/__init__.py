@@ -1,19 +1,10 @@
-import os
+from .dev import DevConfig
+from .test import TestConfig
+from .prod import ProdConfig
 
 
-def load_config():
-    """加载配置类"""
-    run_mode = os.environ.get('RUN_MODE', 'DEV')
-    try:
-        if run_mode == 'DEV':
-            from .dev import DevConfig
-            return DevConfig
-        elif run_mode == 'PRODUCTION':
-            from .prod import ProdConfig
-            return ProdConfig
-        else:
-            from .dev import DevConfig
-            return DevConfig
-    except ImportError:
-        from .dev import DevConfig
-        return DevConfig
+config = {
+    'dev': DevConfig,
+    'test': TestConfig,
+    'prod': ProdConfig
+}
