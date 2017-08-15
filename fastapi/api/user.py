@@ -13,7 +13,7 @@ def users():
     return users_schema.jsonify(users)
 
 
-@api_blueprint.route('/user/<int:id>', methods=['GET'])
+@api_blueprint.route('/users/<int:id>', methods=['GET'])
 def user(id):
     user = User.query.get_or_404(id)
     return user_schema.jsonify(user)
@@ -24,7 +24,7 @@ def add_user():
     # user, errors = user_schema.load(request.form)
     user, errors = user_schema.load(request.json)
     if errors:
-        resp = render_error(code=-1, msg=str(errors))
+        resp = render_error(code=1, msg='提交的数据不合法')
         resp.status_code = 400
         return resp
 

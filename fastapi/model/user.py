@@ -1,7 +1,8 @@
-from marshmallow import post_load
+import flask
+from marshmallow import post_load, validates, ValidationError
 
 from fastapi import db, ms
-from fastapi.model.base import BaseModel
+from fastapi.model.base import BaseModel, BaseSchema
 
 
 class User(BaseModel):
@@ -20,7 +21,7 @@ class User(BaseModel):
         return ['name', 'age']
 
 
-class UserSchema(ms.Schema):
+class UserSchema(BaseSchema):
     class Meta:
         # Fields to expose
         fields = ('id', 'name', 'age')
@@ -28,6 +29,16 @@ class UserSchema(ms.Schema):
     @post_load
     def make_user(self, data):
         return User(**data)
+
+    @validates('name')
+    def validate_name(self, value):
+        if not 0 < len(value) < 30:
+            raise ValidationError('name字段不合法')
+
+    @validates('age')
+    def validate_age(self, value):
+        if not 0 < value < 99:
+            raise ValidationError('age字段不合法')
 
 
 user_schema = UserSchema()

@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from fastapi import db
+import flask
+
+from fastapi import db, ms
 
 
 class BaseModel(db.Model):
@@ -16,3 +18,13 @@ class BaseModel(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+
+class BaseSchema(ms.Schema):
+    def jsonify(self, obj, *args, **kwargs):
+        data, errors = self.dump(obj, many=self.many)
+        if errors:
+            resp = {'code': -1, 'msg': 'dump对象失败', 'data': None}
+        else:
+            resp = {'code': 0, 'msg': '', 'data': data}
+        return flask.jsonify(resp, *args, **kwargs)
