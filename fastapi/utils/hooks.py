@@ -1,7 +1,7 @@
-
+from fastapi.utils.stats import add_request
 
 def before_request_handler():
-    pass
+    add_request()
 
 
 def after_request_handler(response):
