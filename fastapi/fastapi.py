@@ -90,8 +90,8 @@ def init_redis():
 
 
 def init_blueprint():
-    from fastapi.api import api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/api')
+    from fastapi.api.v1 import api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
     app.logger.info('初始化blueprint成功')
 
 

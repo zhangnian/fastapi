@@ -1,5 +1,5 @@
 from flask import abort, current_app, request
-from fastapi.api import api_blueprint
+from fastapi.api.v1 import api_blueprint
 from fastapi.model.user import User, user_schema, users_schema
 from fastapi.utils.http_util import render_ok, render_error
 

@@ -1,4 +1,4 @@
-from fastapi.api import api_blueprint
+from fastapi.api.v1 import api_blueprint
 from fastapi.utils.stats import get_rps
 from fastapi.utils.http_util import render_ok
 
