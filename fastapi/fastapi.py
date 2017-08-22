@@ -3,6 +3,7 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
+from werkzeug.utils import find_modules, import_string
 from raven.contrib.flask import Sentry
 from sqlalchemy import engine, event
 from flask import Flask
@@ -89,15 +90,18 @@ def init_redis():
     app.logger.info('初始化Redis成功')
 
 
-def init_blueprint():
-    from fastapi.api.v1 import api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
-    app.logger.info('初始化blueprint成功')
+def register_blueprints():
+    modules = find_modules('fastapi.api', recursive=True)
+    for name in modules:
+        module = import_string(name)
+        if hasattr(module, 'bp'):
+            app.register_blueprint(module.bp)
 
 
 def init_error_handlers():
     app.register_error_handler(404, error_404_handler)
     app.register_error_handler(APIError, error_handler)
+
 
 def init_hooks():
     app.before_request(before_request_handler)
@@ -121,7 +125,7 @@ def init_app():
     init_db()
     init_redis()
     init_sentry()
-    init_blueprint()
+    register_blueprints()
 
 
 init_app()
