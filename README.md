@@ -20,6 +20,7 @@ sqlalchemy的flask扩展
 
 ### 扩展的功能
 - 使用flask blueprint对项目进行模块化划分
+- 自动导入API目录下的blueprint
 - 封装日志组件，按照每天进行日志滚动
 - 规范API响应格式，data只能是字典或列表类型
 ```
