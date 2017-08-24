@@ -3,6 +3,7 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
+from celery import Celery
 from werkzeug.utils import find_modules, import_string
 from raven.contrib.flask import Sentry
 from sqlalchemy import engine, event
@@ -16,9 +17,11 @@ from fastapi.utils.hooks import before_request_handler, after_request_handler
 from fastapi.utils.redis_client import init_redis_client
 from fastapi.config import config
 
+
 app = Flask(__name__)
 db = SQLAlchemy()
 ms = Marshmallow(app)
+celery = Celery(app.import_name)
 
 __all__ = [app, db]
 
@@ -93,8 +96,10 @@ def init_redis():
 def register_blueprints():
     modules = find_modules('fastapi.api', recursive=True)
     for name in modules:
+        print('=============', name)
         module = import_string(name)
         if hasattr(module, 'bp'):
+            print(module.bp)
             app.register_blueprint(module.bp)
 
 
@@ -117,6 +122,11 @@ def init_sentry():
     app.logger.info('初始化Sentry成功')
 
 
+def init_celery():
+    celery.conf.update(app.config)
+    app.logger.info('初始化celery成功')
+
+
 def init_app():
     init_config()
     init_logger()
@@ -125,6 +135,7 @@ def init_app():
     init_db()
     init_redis()
     init_sentry()
+    init_celery()
     register_blueprints()
 
 
