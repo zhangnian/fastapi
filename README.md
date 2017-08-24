@@ -17,6 +17,9 @@ sqlalchemy的flask扩展
 #### Redis
 在utils包中简单封装了一个全局的redis客户端，redis的服务器配置从配置文件中读取
 
+#### Celery
+在api.v1.async下有一个使用celery实现异步任务的demo
+
 
 ### 扩展的功能
 - 使用flask blueprint对项目进行模块化划分
