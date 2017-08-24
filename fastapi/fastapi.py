@@ -10,9 +10,11 @@ from sqlalchemy import engine, event
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from fastapi.utils.error import APIError
-from fastapi.utils.error_handlers import error_404_handler, error_handler
+from fastapi.utils.error_handlers import error_404_handler, error_429_handler, error_handler
 from fastapi.utils.hooks import before_request_handler, after_request_handler
 from fastapi.utils.redis_client import init_redis_client
 from fastapi.config import config
@@ -22,6 +24,8 @@ app = Flask(__name__)
 db = SQLAlchemy()
 ms = Marshmallow(app)
 celery = Celery(app.import_name)
+limiter = Limiter(key_func=get_remote_address)
+
 
 __all__ = [app, db]
 
@@ -105,6 +109,7 @@ def register_blueprints():
 
 def init_error_handlers():
     app.register_error_handler(404, error_404_handler)
+    app.register_error_handler(429, error_429_handler)
     app.register_error_handler(APIError, error_handler)
 
 
@@ -137,6 +142,11 @@ def init_celery():
     app.logger.info('初始化celery成功')
 
 
+
+def init_limiter():
+    limiter.init_app(app)
+
+
 def init_app():
     init_config()
     init_logger()
@@ -146,6 +156,7 @@ def init_app():
     init_redis()
     init_sentry()
     init_celery()
+    init_limiter()
     register_blueprints()
 
 

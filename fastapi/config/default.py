@@ -24,3 +24,5 @@ class Config:
     CELERY_RESULT_SERIALIZER = 'json'
     CELERY_TASK_RESULT_EXPIRES = 60 * 60
     CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
+
+    RATELIMIT_HEADERS_ENABLED = True
