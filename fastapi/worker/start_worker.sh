@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-celery -A fastapi.worker.tasks worker -l info
+celery -A fastapi.fastapi.celery -l info worker
