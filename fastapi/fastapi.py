@@ -151,6 +151,11 @@ def init_cache():
     cache.init_app(app)
 
 
+def register_signal_handlers():
+    from fastapi.signals import register_signal_handlers as _register_signal_handlers
+    _register_signal_handlers()
+
+
 def init_app():
     init_config()
     init_logger()
@@ -163,6 +168,7 @@ def init_app():
     init_limiter()
     init_cache()
     register_blueprints()
+    register_signal_handlers()
 
 
 init_app()
