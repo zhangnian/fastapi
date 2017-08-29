@@ -26,3 +26,8 @@ class Config:
     CELERY_ACCEPT_CONTENT = ['json', 'msgpack']
 
     RATELIMIT_HEADERS_ENABLED = True
+
+    CACHE_KEY_PREFIX = 'fastapi::'
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_URL = 'redis://localhost:16379/0'
+    CACHE_DEFAULT_TIMEOUT = 60 * 60

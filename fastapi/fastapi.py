@@ -12,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cache import Cache
 
 from fastapi.utils.error import APIError
 from fastapi.utils.error_handlers import error_404_handler, error_429_handler, error_handler
@@ -25,6 +26,7 @@ db = SQLAlchemy()
 ms = Marshmallow(app)
 celery = Celery(app.import_name)
 limiter = Limiter(key_func=get_remote_address)
+cache = Cache()
 
 
 __all__ = [app, db]
@@ -100,10 +102,8 @@ def init_redis():
 def register_blueprints():
     modules = find_modules('fastapi.api', recursive=True)
     for name in modules:
-        print('=============', name)
         module = import_string(name)
         if hasattr(module, 'bp'):
-            print(module.bp)
             app.register_blueprint(module.bp)
 
 
@@ -147,6 +147,10 @@ def init_limiter():
     limiter.init_app(app)
 
 
+def init_cache():
+    cache.init_app(app)
+
+
 def init_app():
     init_config()
     init_logger()
@@ -157,6 +161,7 @@ def init_app():
     init_sentry()
     init_celery()
     init_limiter()
+    init_cache()
     register_blueprints()
 
 

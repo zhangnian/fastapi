@@ -1,12 +1,14 @@
 from flask import abort, current_app, request, Blueprint
+from fastapi.fastapi import cache
 from fastapi.model.user import User, user_schema, users_schema
 from fastapi.utils.http_util import render_ok, render_error
-
+from fastapi.utils.cache import user_cache_key
 
 bp = Blueprint("user", __name__, url_prefix='/user')
 
 
 @bp.route('/users', methods=['GET'])
+@cache.cached()
 def users():
     users = User.query.all()
     if not users:
@@ -16,6 +18,7 @@ def users():
 
 
 @bp.route('/users/<int:id>', methods=['GET'])
+@cache.cached(key_prefix=user_cache_key)
 def user(id):
     user = User.query.get_or_404(id)
     return user_schema.jsonify(user)
